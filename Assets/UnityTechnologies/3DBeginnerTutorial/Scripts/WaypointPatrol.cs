@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,19 +6,28 @@ public class WaypointPatrol : MonoBehaviour
     public NavMeshAgent navMeshAgent;
     public Transform[] waypoints;
 
-    int m_CurrentWaypointIndex;
+    private int currentWaypointIndex;
 
-    void Start ()
+    private void Start()
     {
-        navMeshAgent.SetDestination (waypoints[0].position);
+        navMeshAgent = GetComponent<NavMeshAgent>(); // Get the NavMeshAgent component from the same game object
+        currentWaypointIndex = 0; // Start at the first waypoint
+        SetDestinationToWaypoint();
     }
 
-    void Update ()
+    private void Update()
     {
-        if(navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance)
+        // Check if the agent has reached the current waypoint
+        if (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance)
         {
-            m_CurrentWaypointIndex = (m_CurrentWaypointIndex + 1) % waypoints.Length;
-            navMeshAgent.SetDestination (waypoints[m_CurrentWaypointIndex].position);
+            currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length; // Move to the next waypoint
+
+            SetDestinationToWaypoint(); // Set the destination to the new waypoint
         }
+    }
+
+    private void SetDestinationToWaypoint()
+    {
+        navMeshAgent.SetDestination(waypoints[currentWaypointIndex].position);
     }
 }
